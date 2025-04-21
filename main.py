@@ -1,9 +1,16 @@
 import streamlit as st
 import pandas as pd
 import requests
+import time
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="Whist Game Viewer", layout="wide")
 st.title("Whist Game Viewer")
+
+
+# Auto-refresh every 60 seconds
+st_autorefresh(interval=60 * 1000, limit=None, key="datarefresh")
+
 
 # Get game ID from URL
 query_params = st.query_params
