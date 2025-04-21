@@ -62,3 +62,28 @@ for p in PLAYERS:
 df.loc["Total"] = totals
 
 st.dataframe(df, use_container_width=True, height=560)
+
+
+# Show final rankings if all rounds are complete
+if len(data) >= len(ROUNDS):
+    st.subheader("🏆 Final Rankings")
+    sorted_scores = sorted(final_scores.items(), key=lambda x: x[1], reverse=True)
+    rankings, last_score, current_rank, offset = [], None, 0, 1
+    for player, score in sorted_scores:
+        if score != last_score:
+            current_rank = offset
+        rankings.append((current_rank, player, score))
+        last_score = score
+        offset += 1
+    for rank, player, score in rankings:
+        st.markdown(f"**{rank}. {player}** – {score} points")
+
+if game_id:
+    st.markdown(
+        f"<footer style='text-align: center; font-size: 0.75rem; color: gray;'>"
+        f"Game ID: {game_id}</footer>",
+        unsafe_allow_html=True
+    )
+
+
+
