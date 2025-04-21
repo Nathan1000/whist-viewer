@@ -8,6 +8,10 @@ st.set_page_config(page_title="Whist Game Viewer", layout="wide")
 st.title("Whist Game Viewer")
 
 
+st.subheader("Refreshes every minute :material/update:")
+if st.button("Refresh now :material/update:"):
+    st.rerun()
+
 # Auto-refresh every 60 seconds
 st_autorefresh(interval=60 * 1000, limit=None, key="datarefresh")
 
