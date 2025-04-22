@@ -38,7 +38,7 @@ except Exception as e:
     st.exception(e)
     st.stop()
 
-#st.write(data) #for debugging
+st.write(data) #for debugging
 
 ROUNDS = list(range(7, 0, -1)) + list(range(2, 8))
 SUITS = ["Hearts ♥️", "Clubs ♣️", "Diamonds ♦️", "Spades ♠️", "No Trumps 🙅🏻"]
@@ -131,6 +131,11 @@ with st.expander("Guesses", expanded=True, icon=":material/psychology_alt:"):
                 if guess is not None:
                     cols[i].metric(label=player, value=guess)
 
+if isinstance(data, dict):
+    next_game_id = data.get("next_game_id")
+    if next_game_id:
+        viewer_url = f"https://whist-score-viewer.streamlit.app/?game_id={next_game_id}"
+        st.success(f"A new game has started! [Click here to follow it 🔎]({viewer_url})")
 
 # Show final rankings if game is over
 if len(scores_by_round) >= len(ROUNDS):
