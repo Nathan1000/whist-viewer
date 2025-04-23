@@ -3,15 +3,18 @@ import pandas as pd
 import requests
 from streamlit_autorefresh import st_autorefresh
 import copy
+import os
+import time
 
 st.set_page_config(page_title="Whist Game Viewer", layout="wide")
 st.title("Whist Game Viewer")
 
 st.write("Updates every 10 seconds :material/update:")
 if st.button("Update now :material/update:"):
+    st.session_state.manual_refresh_trigger = time.time()
     st.rerun()
 
-# Auto-refresh every 20 seconds
+# Auto-refresh every 10 seconds
 st_autorefresh(interval=10 * 1000, limit=None, key="datarefresh")
 
 # Get game ID from URL
@@ -24,6 +27,9 @@ if not game_id:
 
 # Fetch game data
 url = f"https://gameviewer.nathanamery.workers.dev?game_id={game_id}"
+if os.getenv("IS_LOCAL") == "1":
+    st.write("LOCAL!")
+    time.sleep(0.3)
 try:
     res = requests.get(url)
     if res.status_code == 404:
@@ -107,7 +113,8 @@ if isinstance(data, dict):
     elif round_num == 4:
         st.subheader(f"Round {round_num + 1} | {cards_this_round} Cards | {suit_this_round}")
         st.info("Ian's second Favourite Round!", icon=":material/info:")
-    elif round_num == 13:
+    elif len(scores_by_round) == len(ROUNDS) and all(r.get("score") is not None for r in scores_by_round[-1].values()):
+
         st.subheader("🏁 Game Over!")
     else:
         st.subheader(f"Round {round_num + 1} | {cards_this_round} Cards | {suit_this_round}")
@@ -138,7 +145,7 @@ if isinstance(data, dict):
         st.success(f"A new game has started! [Click here to follow it 🔎]({viewer_url})")
 
 # Show final rankings if game is over
-if len(scores_by_round) >= len(ROUNDS):
+if len(scores_by_round) == len(ROUNDS) and all(r.get("score") is not None for r in scores_by_round[-1].values()):
     winner = max(final_scores, key=final_scores.get)
     st.subheader(f"{winner} wins with {final_scores[winner]} points!")
 
